@@ -1,4 +1,4 @@
-\# Infrastructure as Code \[Lab\_1]
+# Infrastructure as Code \[Lab\_1]
 
 
 
