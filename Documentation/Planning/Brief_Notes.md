@@ -29,3 +29,38 @@ Learning Outcomes -
 	 - Aim to have something to demonstrate early on - conduct self reflective and analytical reviews through out the process
 
 _______________________
+
+Note first what AWS states about CloudFormation and lambda:
+
+https://docs.aws.amazon.com/lambda/latest/dg/foundation-iac.htmlwhich states: “AWS CloudFormation is the foundational IaC service from AWS. You can use YAMLor JSON templates to model and provision your entire AWS infrastructure, including Lambda functions. CloudFormation handles the complexities of creating, updating, and deleting yourAWS resources.”
+
+- Outline the importance and purpose of CloudFormation
+- Outline the purpose of lambda functions in AWS infrastructure
+- Outline what, why and where it can be integrated and used to improve aspects of the DevOps pipeline
+	- Does it provide - Consistency & Reproducibility?
+	- Idempotency; Modularity & Reusability?
+	- Testability; Security, Maintainability?  
+
+
+## Part A: Long question 1. 
+	
+Create a lambda - restful api using cloudformation so as to understand how CloudFormation can be used to support such structures. 
+
+Provided Tutorials: 
+
+ https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-request-validation-sample-cloudformation.html
+
+ https://rino-dev.com/build-and-deploy-rest-api-on-aws
+
+1) declare the tutorial you have followed, 
+2) take the work to the next level by changing the code to improve it or change the features.
+
+## Part B: Best practices 
+
+1. Consider best practices when creating your sample code
+	- Requires defining best practices.
+2. Apply power tools where appropriate
+	- Python package looks good.
+3. Consider ‘ilities’ – security, scalability, performance
+	- Research should contribute to this. 
+
