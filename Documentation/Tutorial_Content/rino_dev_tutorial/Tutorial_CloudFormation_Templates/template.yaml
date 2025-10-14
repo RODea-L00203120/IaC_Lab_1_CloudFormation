@@ -16,7 +16,7 @@ Resources:
     Type: AWS::ApiGateway::Resource
     Properties:
       ParentId: !GetAtt SimpleRestAPI.RootResourceId
-      PathPart: "ip"
+      PathPart: "ip_v2"
       RestApiId: !Ref SimpleRestAPI
 
   ApiGatewayMethod:
@@ -71,7 +71,7 @@ Resources:
               }
 
       Description: AWS Lambda function
-      FunctionName: "get_ip"
+      FunctionName: "get_ip_v2"
       Handler: index.lambda_handler
       MemorySize: 256
       Role: !GetAtt LambdaIamRole.Arn
