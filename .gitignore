@@ -1,0 +1,32 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+ehthumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.swo*
+.swp*
+
+# Ignore local editor 
+.vscode/
+
+# Ignore local Python files
+__pycache__/
+*.pyc
+.venv/
+
+# Ignore the build artifacts from SAM
+# This is the most important one!
+.aws-sam/
+
+# Ignore local environment files
+.env
