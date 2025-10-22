@@ -4,6 +4,7 @@ version = 0.1
 
 [default.global.parameters]
 stack_name = "powertools-quickstart"
+region = "us-east-1"
 
 [default.build.parameters]
 cached = true
@@ -16,6 +17,11 @@ lint = true
 capabilities = "CAPABILITY_IAM"
 confirm_changeset = true
 resolve_s3 = true
+stack_name = "powertools-test"
+s3_prefix = "powertools-test"
+region = "us-east-1"
+disable_rollback = true
+image_repositories = []
 
 [default.package.parameters]
 resolve_s3 = true
