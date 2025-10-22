@@ -86,6 +86,28 @@ Outputs:
 
 ## Run Code locally using SAM: 
 
+Without a container you are required to have the python 3.13 on your path; I didn't so I went with a container solution. 
+
 ``` bash
 sam build && sam local start-api
 ```
+
+## Run using a docker container: 
+
+``` bash
+sam build --use-container && sam local start-api
+```
+
+![](screenshots/2025-10-22-11-44-07.png)
+
+![](screenshots/2025-10-22-11-45-37.png)
+
+## Invoke function: 
+
+``` bash 
+curl http://127.0.0.1:3000/hello 
+```
+
+![](screenshots/2025-10-22-17-26-44.png)
+
+
