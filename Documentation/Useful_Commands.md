@@ -30,3 +30,8 @@ docker ps
 Then, use that ID to stop (kill) it:
 
 docker kill <CONTAINER ID>
+
+## Output tree directory as markdown paste friendly ascii snippet: 
+You can specify files/dirs to ignore too: 
+
+tree --charset=ascii -I 'screenshots|Steps.md'
