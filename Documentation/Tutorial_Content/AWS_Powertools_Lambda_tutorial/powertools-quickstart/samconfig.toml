@@ -17,9 +17,8 @@ lint = true
 capabilities = "CAPABILITY_IAM"
 confirm_changeset = true
 resolve_s3 = true
-stack_name = "powertools-test"
-s3_prefix = "powertools-test"
-region = "us-east-1"
+stack_name = "test-name-route"
+s3_prefix = "test-name-route"
 disable_rollback = true
 image_repositories = []
 

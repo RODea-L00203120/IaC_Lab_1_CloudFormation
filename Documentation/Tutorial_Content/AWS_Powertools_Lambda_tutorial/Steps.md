@@ -110,6 +110,120 @@ curl http://127.0.0.1:3000/hello
 
 ![](screenshots/2025-10-22-17-26-44.png)
 
+## Test live deployment
+
+``` bash
+sam deploy --guided
+```
+
+![](screenshots/2025-10-22-21-19-32.png)
+
+![](screenshots/2025-10-22-21-20-44.png)
+
+![](screenshots/2025-10-22-21-25-28.png)
+
+![](screenshots/2025-10-22-21-31-35.png)
+
+![](screenshots/2025-10-22-21-32-36.png)
+
+![](screenshots/2025-10-22-21-33-19.png)
 
 ## Incorporate Powertools tracer for route handling
+
+app.py:
+
+``` python
+from aws_lambda_powertools.event_handler import APIGatewayRestResolver
+
+app = APIGatewayRestResolver()
+
+
+@app.get("/hello/<name>")
+def hello_name(name):
+    return {"message": f"hello {name}!"}
+
+
+@app.get("/hello")
+def hello():
+    return {"message": "hello unknown!"}
+
+
+def lambda_handler(event, context):
+    return app.resolve(event, context)
+```
+
+requirements.txt:
+
+``` txt
+aws-lambda-powertools[tracer]  # Tracer requires AWS X-Ray SDK dependency
+
+```
+
+template.yaml
+
+``` yaml
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Sample SAM Template for powertools-quickstart
+
+Globals:
+  Function:
+    Timeout: 3 
+Resources:
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: hello_world/ 
+      Handler: app.lambda_handler 
+      Runtime: python3.13 
+      Architectures: 
+        - x86_64
+      Events:
+        # Endpoint for GET /hello
+        HelloWorldRoot:
+          Type: Api
+          Properties:
+            Path: /hello
+            Method: get
+        # Endpoint for GET /hello/{name}
+        HelloWorldName:
+          Type: Api
+          Properties:
+            Path: /hello/{name} # Added path parameter
+            Method: get
+
+Outputs:
+  HelloWorldApi:
+    Description: "API Gateway endpoint URL for Prod stage for Hello World function (/hello)"
+    
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+
+  # Added an output for the new endpoint
+  HelloWorldNameApi:
+    Description: "API Gateway endpoint URL for Prod stage for Hello World function (/hello/{name})"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/{name}"
+```
+
+
+Build this locally:
+
+``` bash
+sam build --use-container && sam local start-api
+
+```
+Test locally: 
+```bash
+curl 'http://127.0.0.1:3000/hello/Ronan'
+```
+
+![](screenshots/2025-10-23-12-02-17.png)
+
+## Deploy and test live: 
+
+```bash
+sam deploy --guided
+``` 
+Same process as before; note the addition of an extra output to the template.yaml allows one to use the output value for testing from the terminal as per below: 
+
+![](screenshots/2025-10-23-12-10-51.png)
 

@@ -1,25 +1,40 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: Sample SAM Template for powertools-quickstart
+
 Globals:
-    Function:
-        Timeout: 3
+  Function:
+    Timeout: 3 
 Resources:
-    HelloWorldFunction:
-        Type: AWS::Serverless::Function
-        Properties:
-            CodeUri: hello_world/
-            Handler: app.lambda_handler
-            Runtime: python3.13
-            Architectures:
-                - x86_64
-            Events:
-                HelloWorld:
-                    Type: Api
-                    Properties:
-                        Path: /hello
-                        Method: get
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: hello_world/ 
+      Handler: app.lambda_handler 
+      Runtime: python3.13 
+      Architectures: 
+        - x86_64
+      Events:
+        # Endpoint for GET /hello
+        HelloWorldRoot:
+          Type: Api
+          Properties:
+            Path: /hello
+            Method: get
+        # Endpoint for GET /hello/{name}
+        HelloWorldName:
+          Type: Api
+          Properties:
+            Path: /hello/{name} # Added path parameter
+            Method: get
+
 Outputs:
-    HelloWorldApi:
-        Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-        Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+  HelloWorldApi:
+    Description: "API Gateway endpoint URL for Prod stage for Hello World function (/hello)"
+    
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+
+  # Added an output for the new endpoint
+  HelloWorldNameApi:
+    Description: "API Gateway endpoint URL for Prod stage for Hello World function (/hello/{name})"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/{name}"
