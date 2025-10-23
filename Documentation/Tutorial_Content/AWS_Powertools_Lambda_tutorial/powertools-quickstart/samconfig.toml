@@ -17,8 +17,8 @@ lint = true
 capabilities = "CAPABILITY_IAM"
 confirm_changeset = true
 resolve_s3 = true
-stack_name = "test-name-route"
-s3_prefix = "test-name-route"
+stack_name = "logger-test"
+s3_prefix = "logger-test"
 disable_rollback = true
 image_repositories = []
 
