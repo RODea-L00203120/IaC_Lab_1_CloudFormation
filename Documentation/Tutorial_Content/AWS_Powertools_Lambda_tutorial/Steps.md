@@ -111,3 +111,5 @@ curl http://127.0.0.1:3000/hello
 ![](screenshots/2025-10-22-17-26-44.png)
 
 
+## Incorporate Powertools tracer for route handling
+
