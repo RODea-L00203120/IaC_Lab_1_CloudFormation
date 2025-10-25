@@ -1,6 +1,11 @@
-**Setup**: Ensure AWS CLI configuration correct, check IAM user configuration, Git/GitHub credentials.
+**Setup**: 
 
-    Expanded on this; set up a Ubuntu VM using virtual box; installed vscode, created a docker container using AWS Lambda Python image, powertools and boto3; have set up aws cli and local (to vm) testing SAM environment.
+    Expanded on this:
+     - Set up a Ubuntu VM using virtual box as sand-boxed dev env; 
+     - Check IAM user configuration, Git/GitHub credentials.
+     - Installed vscode with separate profile for extensions
+     - Docker to use AWS Lambda Python image, powertools and boto3 
+     - AWS cli tool and SAM local testing environment.
     
 **Baseline Tutorial**: Follow basic tutorial - take notes, screenshots during process - refer to AWS documentation regularly - 
 
@@ -9,7 +14,7 @@
     
 **Research** :  Begin writing questions - exploratory research related to best practices, develop plan to go beyond minimum requirements
 
-    Currently navigating through a lot of AWS documentation - need to shift to academic papers by Monday. 
+    Currently navigating through a lot of AWS documentation. To do: tab-groups to references and collate academic references.
 
 
 ## Next Steps: 
