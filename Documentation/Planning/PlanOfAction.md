@@ -5,7 +5,7 @@
      - Check IAM user configuration, Git/GitHub credentials.
      - Installed vscode with separate profile for extensions
      - Docker to use AWS Lambda Python image, powertools and boto3 
-     - AWS cli tool and SAM local testing environment.
+     - AWS CLI tool and SAM local testing environment.
     
 **Baseline Tutorial**: Follow basic tutorial - take notes, screenshots during process - refer to AWS documentation regularly - 
 
@@ -19,11 +19,14 @@
 
 ## Next Steps: 
 
-Test rino-tutorial template in SAM environment - evaluate functionality and expand. Target one of the following: 
+Having complete the AWS_Powertools_Lambda_Tutorial and the rino_dev tutorial (insert links): 
 
-security, scalability, functionality, reliability, maintainability etc. 
+- Combine the API request feature of the rino dev example with powertools - the build in event handler can achieve a similar function
 
-Test in SAM environment - screenshot, deploy and screenshot.
+- Investigate improvements in terms of functionality, reliability, visibility, security etc. 
+    - Decide on an are to focus on and improve. 
+    
+     
 
-Create SAM - set-up tutorial document. 
+
 
