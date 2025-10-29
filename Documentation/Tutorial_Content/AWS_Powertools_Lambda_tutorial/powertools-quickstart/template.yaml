@@ -25,7 +25,7 @@ Resources:
         HelloWorldName:
           Type: Api
           Properties:
-            Path: /hello/{name} # Added path parameter
+            Path: /hello/{name} 
             Method: get
 
 Outputs:
