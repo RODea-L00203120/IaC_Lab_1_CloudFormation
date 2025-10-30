@@ -316,3 +316,114 @@ curl https://e1t3w1or20.execute-api.us-east-1.amazonaws.com/Prod/hello
 For Example: 
 
 ![](screenshots/2025-10-29-21-56-03.png)
+
+
+# Adding Distributed Tracing Service AWS X-Ray via Powertools tracer wrapper:
+
+While the previously implemented logging functionality is useful for monitoring; error reports and more; next to be integrated is a tracing function which allows for tracing the path of a sent request as it traverses the deployed services giving the ability to monitor and trace end-to-end requests for debugging etc. 
+
+Powertools provides a lightweight wrapper for AWS X-Ray services named Tracer
+
+### template.yaml
+
+``` yaml
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Sample SAM Template for powertools-quickstart
+
+Globals:
+  Function:
+    Timeout: 3 
+  #_____________________________________________________________________________________
+  # Addition of Tracing added here  
+  Api:
+    TracingEnabled: true
+Resources:
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: hello_world/ 
+      Handler: app.lambda_handler 
+      Runtime: python3.13
+      # Activation within the function added here 
+      Tracing: Active
+    #______________________________________________________________________________________
+      Architectures: 
+        - x86_64
+      Events:
+   
+        HelloWorldRoot:
+          Type: Api
+          Properties:
+            Path: /hello
+            Method: get
+    
+        HelloWorldName:
+          Type: Api
+          Properties:
+            Path: /hello/{name} 
+            Method: get
+
+Outputs:
+  HelloWorldApi:
+    Description: "API Gateway endpoint URL for Prod stage for Hello World function (/hello)"
+    
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+
+  HelloWorldNameApi:
+    Description: "API Gateway endpoint URL for Prod stage for Hello World function (/hello/{name})"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/{name}"
+```
+
+### app.py
+
+``` python
+from aws_lambda_powertools import Logger, Tracer
+from aws_lambda_powertools.event_handler import APIGatewayRestResolver
+from aws_lambda_powertools.logging import correlation_paths
+
+logger = Logger(service="APP")
+# Initialize tracer, define service name
+tracer = Tracer(service="APP")
+app = APIGatewayRestResolver()
+
+
+@app.get("/hello/<name>")
+# @tracer.capture_method decorator
+@tracer.capture_method
+def hello_name(name):
+    logger.info(f"Request from {name} received")
+    return {"message": f"hello {name}!"}
+
+
+@app.get("/hello")
+# @tracer.capture_method decorator
+@tracer.capture_method
+def hello():
+# tracer annotation to use value unknown during trace of /hello route
+    tracer.put_annotation(key="User", value="unknown")
+    logger.info("Request from unknown received")
+    return {"message": "hello unknown!"}
+
+
+@logger.inject_lambda_context(correlation_id_path=correlation_paths.API_GATEWAY_REST, log_event=True)
+# Adds ColdStart annotation within Tracer itself. 
+# Also add a new Service annotation using the value of Tracer(service="APP") - easy filtering
+@tracer.capture_lambda_handler
+def lambda_handler(event, context):
+    return app.resolve(event, context)
+
+```
+### requirements.txt
+``` txt
+aws-lambda-powertools
+aws-xray-sdk
+```
+
+## Viewing on X-Ray interface:
+After implementing the above: rebuild, deploy and invoke before investigating via the X-Ray interface. 
+
+![](screenshots/2025-10-30-16-09-20.png)
+
+
+
