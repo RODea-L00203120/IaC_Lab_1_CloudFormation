@@ -127,7 +127,7 @@ def lambda_handler(event, context):
 aws-lambda-powertools
 ```
 
-#3. Build and Test locally
+# 3. Build and Test locally
 
 ``` bash
 sam build --use-container
@@ -183,7 +183,7 @@ However our powertools use means routing is handled by APIGatewayRestResolver.re
         logger.exception(e)
         raise
 ```
-So instead we access the event data directly in the routing functions rather than the handler
+So instead we access the event data directly in the routing functions rather than the handler - we use the powertools current_event.raw_event property - https://docs.aws.amazon.com/powertools/python/2.34.1/api/utilities/data_classes/common.html#aws_lambda_powertools.utilities.data_classes.common.DictWrapper.raw_event
 
 ``` python
 @app.get("/greeting/<name>")
@@ -201,8 +201,10 @@ def greeting_name(name):
     return {"message": f"hello {name}, your ip is {source_ip}"}
 ```
 
-### app.py 
 
+
+### app.py 
+``` python
 from aws_lambda_powertools import Logger, Tracer, Metrics
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver
 from aws_lambda_powertools.logging import correlation_paths
@@ -256,6 +258,13 @@ def lambda_handler(event, context):
     except Exception as e:
         logger.exception(e)
         raise
+```
 
+# Build and Test locally: 
 
+Following same method as above we can now see that the source ip address is returned
+
+![](screenshots/2025-10-30-21-45-57.png)
+
+# Deploy and view log insights, traces and metrics
 
