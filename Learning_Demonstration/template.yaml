@@ -1,0 +1,48 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Learning Demonstration using powertools
+
+
+Globals:
+  Function:
+    Timeout: 3 
+  Api:
+    TracingEnabled: true
+
+
+Resources:
+  GreetingFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: greeting_ip_function/ 
+      Handler: app.lambda_handler 
+      Runtime: python3.13 
+      Tracing: Active
+      Architectures: 
+        - x86_64
+      Events:
+        # Endpoint for GET /greeting
+        GreetingNoName:
+          Type: Api
+          Properties:
+            Path: /greeting
+            Method: get
+        # Endpoint for GET /greeting/{name}
+        GreetingWithName:
+          Type: Api
+          Properties:
+            Path: /greeting/{name} 
+            Method: get
+      Policies:
+        - CloudWatchPutMetricPolicy: {}
+
+Outputs:
+  GreetingApi:
+    Description: "API Gateway endpoint URL for Prod stage for greeting_ip_function (/greeting)"
+    
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/greeting/"
+
+  # Added an output for the new endpoint
+  GreetingNameApi:
+    Description: "API Gateway endpoint URL for Prod stage for greeting_ip_function (/greeting/{name})"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/greeting/{name}"
