@@ -127,7 +127,7 @@ def lambda_handler(event, context):
 aws-lambda-powertools
 ```
 
-# Build and Test Locally
+#3. Build and Test locally
 
 ``` bash
 sam build --use-container
@@ -152,3 +152,110 @@ curl http://localhost:3000/greeting
 # Test with name  
 curl http://localhost:3000/greeting/Ronan
 ```
+
+![](screenshots/2025-10-30-19-56-12.png)
+
+
+# 4. Add IP retrieval functionality 
+
+The rino-dev tutorial accessed the source ip using: 
+
+``` python
+
+          def lambda_handler(event, context):
+              ip_address = event['requestContext']['identity']['sourceIp']
+              return {
+                  'body': json.dumps({"ip_address": ip_address}),
+                  'headers': {
+                      'Content-Type': 'application/json'
+                  },
+                  'statusCode': 200
+              }
+
+```
+
+However our powertools use means routing is handled by APIGatewayRestResolver.resolve()
+
+```python def lambda_handler(event, context):
+    try:
+        return app.resolve(event, context)
+    except Exception as e:
+        logger.exception(e)
+        raise
+```
+So instead we access the event data directly in the routing functions rather than the handler
+
+``` python
+@app.get("/greeting/<name>")
+# @tracer.capture_method decorator
+@tracer.capture_method
+def greeting_name(name):
+    # Here we can use powertools to obtain the event data
+    event = app.current_event.raw_event
+    # Obtain Ip as per initial tutorial 
+    source_ip = event['requestContext']['identity']['sourceIp']
+
+    logger.info(f"Request from {name} received from ip: {source_ip}")
+    # Sends a data point with value 1 to CloudWatch - CloudWatch aggregates
+    metrics.add_metric(name="SuccessfulGreetings", unit=MetricUnit.Count, value=1)
+    return {"message": f"hello {name}, your ip is {source_ip}"}
+```
+
+### app.py 
+
+from aws_lambda_powertools import Logger, Tracer, Metrics
+from aws_lambda_powertools.event_handler import APIGatewayRestResolver
+from aws_lambda_powertools.logging import correlation_paths
+from aws_lambda_powertools.metrics import MetricUnit
+
+logger = Logger(service="APP")
+# Initialize tracer, define service name
+tracer = Tracer(service="APP")
+# initialize Metrics with our service name (APP) and metrics namespace (MyApp),
+metrics = Metrics(namespace="MyApp", service="APP")
+app = APIGatewayRestResolver()
+
+
+@app.get("/greeting/<name>")
+# @tracer.capture_method decorator
+@tracer.capture_method
+def greeting_name(name):
+    # Here we can use powertools to obtain the event data
+    event = app.current_event.raw_event
+    # Obtain Ip as per initial tutorial 
+    source_ip = event['requestContext']['identity']['sourceIp']
+
+    logger.info(f"Request from {name} received from ip: {source_ip}")
+    # Sends a data point with value 1 to CloudWatch - CloudWatch aggregates
+    metrics.add_metric(name="SuccessfulGreetings", unit=MetricUnit.Count, value=1)
+    return {"message": f"hello {name}, your ip is {source_ip}"}
+
+
+@app.get("/greeting")
+# @tracer.capture_method decorator
+@tracer.capture_method
+def greeting():
+     # Here we can use powertools to obtain the event data
+    event = app.current_event.raw_event
+    # Obtain Ip as per initial tutorial 
+    source_ip = event['requestContext']['identity']['sourceIp']
+    # tracer annotation to use value unknown during trace of /greeting route
+    tracer.put_annotation(key="User", value="unknown")
+    logger.info("Request from unknown received")
+    # Sends a data point with value 1 to CloudWatch - CloudWatch aggregates
+    metrics.add_metric(name="SuccessfulGreetings", unit=MetricUnit.Count, value=1)
+    return {"message": f"hello unknown, your ip is {source_ip}"}
+
+
+@tracer.capture_lambda_handler
+@logger.inject_lambda_context(correlation_id_path=correlation_paths.API_GATEWAY_REST, log_event=True)
+@metrics.log_metrics(capture_cold_start_metric=True)
+def lambda_handler(event, context):
+    try:
+        return app.resolve(event, context)
+    except Exception as e:
+        logger.exception(e)
+        raise
+
+
+

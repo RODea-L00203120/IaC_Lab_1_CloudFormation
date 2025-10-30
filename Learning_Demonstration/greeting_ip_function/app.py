@@ -15,22 +15,31 @@ app = APIGatewayRestResolver()
 # @tracer.capture_method decorator
 @tracer.capture_method
 def greeting_name(name):
-    logger.info(f"Request from {name} received")
+    # Here we can use powertools to obtain the event data
+    event = app.current_event.raw_event
+    # Obtain Ip as per initial tutorial 
+    source_ip = event['requestContext']['identity']['sourceIp']
+
+    logger.info(f"Request from {name} received from ip: {source_ip}")
     # Sends a data point with value 1 to CloudWatch - CloudWatch aggregates
     metrics.add_metric(name="SuccessfulGreetings", unit=MetricUnit.Count, value=1)
-    return {"message": f"hello {name}!"}
+    return {"message": f"hello {name}, your ip is {source_ip}"}
 
 
 @app.get("/greeting")
 # @tracer.capture_method decorator
 @tracer.capture_method
 def greeting():
+     # Here we can use powertools to obtain the event data
+    event = app.current_event.raw_event
+    # Obtain Ip as per initial tutorial 
+    source_ip = event['requestContext']['identity']['sourceIp']
     # tracer annotation to use value unknown during trace of /greeting route
     tracer.put_annotation(key="User", value="unknown")
     logger.info("Request from unknown received")
     # Sends a data point with value 1 to CloudWatch - CloudWatch aggregates
     metrics.add_metric(name="SuccessfulGreetings", unit=MetricUnit.Count, value=1)
-    return {"message": "hello unknown!"}
+    return {"message": f"hello unknown, your ip is {source_ip}"}
 
 
 @tracer.capture_lambda_handler
