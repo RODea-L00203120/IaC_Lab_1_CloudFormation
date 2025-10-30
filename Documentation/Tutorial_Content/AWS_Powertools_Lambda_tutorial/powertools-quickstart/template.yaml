@@ -30,6 +30,8 @@ Resources:
           Properties:
             Path: /hello/{name} 
             Method: get
+      Policies:
+        - CloudWatchPutMetricPolicy: {}
 
 Outputs:
   HelloWorldApi:
