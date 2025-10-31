@@ -268,3 +268,90 @@ Following same method as above we can now see that the source ip address is retu
 
 # Deploy and view log insights, traces and metrics
 
+## Loadtesting/traffic generation
+
+Now that we have verified this code works locally we can deploy to AWS live and evaluate it there; however in order to generate some traffic in an automated fashion and avoid having to repeatedly use curl a load testing script was designed which uses Grafana's K6 Open Source load testing tool. 
+
+### tests/load/loadtest.js
+
+```js
+import http from 'k6/http';
+import { check } from 'k6';
+
+const names = [
+  'Alice', 'Bob', 'Charlie', 'David', 'Emma',
+  'Frank', 'Grace', 'Henry', 'Iris', 'Jack',
+  'Kate', 'Liam', 'Mia', 'Noah', 'Olivia',
+  'Peter', 'Quinn', 'Rachel', 'Sam', 'Tina',
+  'Uma', 'Victor', 'Wendy', 'Xavier', 'Yara',
+  'Zach', 'Amy', 'Ben', 'Clara', 'Dan',
+  'Eve', 'Fred', 'Gina', 'Hank', 'Ivy',
+  'Joe', 'Kim', 'Leo', 'Maya', 'Nick',
+  'Oscar', 'Pam', 'Ray', 'Sue', 'Tom',
+  'Val', 'Will', 'Xena', 'Yogi', 'Zoe'
+];
+
+//insert endpoint here 
+const BASE_URL = '';
+
+export let options = {
+  vus: 1,          // 1 virtual user
+  iterations: 50,  // 50 total requests
+};
+
+export default function () {
+  // Pick random name
+  const randomName = names[Math.floor(Math.random() * names.length)];
+  
+  // Test /greeting/{name}
+  const res = http.get(`${BASE_URL}/greeting/${randomName}`);
+  
+  check(res, {
+    'status is 200': (r) => r.status === 200,
+    'has message': (r) => r.json('message') !== undefined,
+    'has ip': (r) => r.json('ip') !== undefined,
+  });
+} 
+```
+
+The above script allows us to generate multiple requests at the /greeting/{name} endpoint - ideally we would also request from multiple IP addresses but this would require a distributed cloud version of the tool and likely incur some additional cost. Still this allows us to generate some extra data for our logs/metrics. 
+
+## Build:
+
+``` bash
+sam build --use-container
+```
+## Deploy to AWS:
+
+``` bash
+sam deploy
+#or
+sam deploy --guided
+```
+
+![](screenshots/2025-10-31-08-47-49.png)
+
+## Generate Load/Traffic
+
+``` bash
+k6 run tests/load/loadtest.js
+```
+
+![](screenshots/2025-10-31-08-53-24.png)
+
+
+### Log Insights Example: 
+
+Let us query for all instances of Bob captured in our logs: 
+
+``` sql 
+fields @timestamp, message
+| filter @message like "Bob"
+| sort @timestamp desc
+```
+
+![](screenshots/2025-10-31-09-06-45.png)
+
+
+### Custom Metric Example: 
+

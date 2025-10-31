@@ -23,7 +23,9 @@ def greeting_name(name):
     logger.info(f"Request from {name} received from ip: {source_ip}")
     # Sends a data point with value 1 to CloudWatch - CloudWatch aggregates
     metrics.add_metric(name="SuccessfulGreetings", unit=MetricUnit.Count, value=1)
-    return {"message": f"hello {name}, your ip is {source_ip}"}
+    return {"message": f"hello {name}, your ip is {source_ip}",
+            "ip": source_ip 
+            }
 
 
 @app.get("/greeting")
@@ -39,7 +41,8 @@ def greeting():
     logger.info("Request from unknown received")
     # Sends a data point with value 1 to CloudWatch - CloudWatch aggregates
     metrics.add_metric(name="SuccessfulGreetings", unit=MetricUnit.Count, value=1)
-    return {"message": f"hello unknown, your ip is {source_ip}"}
+    return {"message": f"hello unknown, your ip is {source_ip}", 
+            "ip": source_ip }
 
 
 @tracer.capture_lambda_handler
