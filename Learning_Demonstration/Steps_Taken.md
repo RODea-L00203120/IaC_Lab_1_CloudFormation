@@ -399,7 +399,70 @@ Building upon the rino-dev tutorial (https://rino-dev.com/build-and-deploy-rest-
 
     C. Repeatability - Once changes were implemented `sam build --use-container` and `sam deploy` allowed for fast iteration
 
-## 2. 
+## 2. Observability:
+
+### Logging:
+
+  - Structured logging with AWS Lambda Powertools capturing request details and IP addresses
+  
+  - Queryable via CloudWatch Log Insights using SQL-like syntax
+  
+  - Example: Filtering all requests from user "Bob" with correlation IDs for tracing
+
+### Metrics:
+
+- Custom CloudWatch metrics tracking successful greetings (SuccessfulGreetings)
+- Automatic aggregation enabling performance monitoring and alerting
+- Load test verification: 50 requests generated 50 metric data points
+
+### Tracing:
+
+- X-Ray distributed tracing showing request flow through API Gateway and Lambda
+- Service map visualization of all 50 test requests
+- Performance insights with latency breakdown per service
+
+## 3. Infrastructure as Code (IaC)
+### Declarative Configuration:
+
+SAM template (template.yaml) defines all infrastructure: API Gateway, Lambda function, IAM policies, CloudWatch permissions
+Single source of truth for infrastructure state
+
+### Reproducibility:
+
+Entire stack deployable consistently across environments with sam deploy
+No manual console clicking required
+
+### Version Control:
+
+Infrastructure changes tracked alongside application code in Git
+Infrastructure drift prevented through declarative definitions
 
 # TODO: Further Potential Improvements:
+
+## Security: 
+
+Security here is lax; obvious improvements include: 
+
+- API Authentication - not included in powertools tutorial
+- IAM Least Privilege - Lambda execution role can likely be further constrained
+- Input Validation/Sanitization - Prohibit any requests containing anything other than a valid name
+
+## Reliability:
+
+- Error handling - try catch blocks for missing data/malformed requests
+- Input Validation Again
+- Health checks/monitoring
+- Investigate Fallback - Regional via route 53 (requires domain and dns configuration)
+
+### Testability 
+
+- Unit Tests - test functions locally and validate returns
+- Integration tests - test deployed API endpoints
+- Create a docker test environment
+
+## Maintainability
+
+- Proper Documentation via docstrings
+- Lock down versions in requirements
+- Refactor code for SRP - Single responsibility - Ip retrieval could be separated
 
