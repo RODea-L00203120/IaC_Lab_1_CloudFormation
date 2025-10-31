@@ -23,8 +23,8 @@ Having complete the AWS_Powertools_Lambda_Tutorial and the rino_dev tutorial (in
 
 - Combine the API request feature of the rino dev example with powertools - the build in event handler can achieve a similar function
 
-- Investigate improvements in terms of functionality, reliability, visibility, security etc. 
-    - Decide on an are to focus on and improve. 
+- Investigate improvements in terms of observability,functionality, reliability, visibility, security etc. 
+    
     
      
 
