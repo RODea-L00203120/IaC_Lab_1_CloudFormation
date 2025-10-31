@@ -355,3 +355,51 @@ fields @timestamp, message
 
 ### Custom Metric Example: 
 
+The load test ran a total of 50 requests so we should expect to see a total of 50 for our custom metric
+
+``` python
+metrics.add_metric(name="SuccessfulGreetings", unit=MetricUnit.Count, value=1)
+```
+
+![](screenshots/2025-10-31-10-34-34.png)
+
+
+### X-Ray Routing Trace
+
+``` python
+@tracer.capture_method
+```
+
+Again; we'd expect to see a total of 50 requests in our X-Ray Trace Map:
+
+![](screenshots/2025-10-31-10-40-58.png)
+
+
+___________________________________________________
+
+# Conclusion 
+
+Building upon the rino-dev tutorial (https://rino-dev.com/build-and-deploy-rest-api-on-aws) by following the powertools tutorial 
+(https://docs.aws.amazon.com/powertools/python/latest/tutorial/) and then combining the logic from both has been a valuable learning experience - it allowed the author to explore various components of Dev Ops practices:
+
+## 1. Containerization, consistency and repeatability:
+
+   The author almost immediately experienced package and path conflicts and inconsistencies when trying to follow the materials on his local machine. 
+
+  - As a result they decided to create a Ubuntu Based VM and investigated methods to develop and run lambda functions in a containerized environment. 
+    - https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-getting-started.html
+    - https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-docker.html
+    https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+
+  - SAM, AWS CLI and Docker allowed the author to develop and test locally via the terminal before deploying to AWS cloudformation; which was an improvement in terms of: 
+
+    A. Build Environment Consistency - Using `sam build --use-container` was an effective way of preventing local machine issues
+    
+    B. Local Testing before deployment - Avoided wasted time, credits and frustrations by testing through deployment trial and error
+
+    C. Repeatability - Once changes were implemented `sam build --use-container` and `sam deploy` allowed for fast iteration
+
+## 2. 
+
+# TODO: Further Potential Improvements:
+
